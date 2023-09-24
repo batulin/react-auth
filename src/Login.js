@@ -1,20 +1,25 @@
-import { useRef, useState, useEffect, useContext } from 'react';
-import AuthContext from "./context/AuthProvider";
+import { useRef, useState, useEffect } from 'react';
+import useAuth from "./hooks/useAuth";
 import jwtDecode from "jwt-decode";
 
 import axios from './api/axios';
+import {useLocation, useNavigate} from "react-router-dom";
 const LOGIN_URL = '/api/v1/auth/login';
 
 
 const Login = () => {
-    const { setAuth } = useContext(AuthContext);
+    const { setAuth } = useAuth();
+
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/";
+
     const userRef = useRef();
     const errRef = useRef();
 
     const [user, setUser] = useState('');
     const [pwd, setPwd] = useState('');
     const [errMsg, setErrMsg] = useState('');
-    const [success, setSuccess] = useState(false);
 
     useEffect(() => {
         userRef.current.focus();
@@ -35,14 +40,14 @@ const Login = () => {
                     withCredentials: true
                 }
             );
-            console.log(JSON.stringify(response?.data));
-            console.log(JSON.stringify(response));
             const accessToken = response?.data?.token;
             const userRoles = jwtDecode(response?.data?.token).roles;
+            console.log(userRoles);
+            console.log(jwtDecode(response?.data?.token));
             setAuth({ user, pwd, userRoles, accessToken });
             setUser('');
             setPwd('');
-            setSuccess(true);
+            navigate(from, {replace: true});
         } catch (err) {
             if (!err?.response) {
                 setErrMsg('No Server Response');
@@ -58,16 +63,6 @@ const Login = () => {
     }
 
     return (
-        <>
-            {success ? (
-                <section>
-                    <h1>You are logged in!</h1>
-                    <br />
-                    <p>
-                        <a href="#">Go to Home</a>
-                    </p>
-                </section>
-            ) : (
                 <section>
                     <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
                     <h1>Sign In</h1>
@@ -101,9 +96,7 @@ const Login = () => {
                         </span>
                     </p>
                 </section>
-            )}
-        </>
-    )
+            )
 }
 
 export default Login
