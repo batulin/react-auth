@@ -24,15 +24,15 @@ function App() {
                 <Route path="/" element={<Home />} />
             </Route>
 
-            <Route element={<RequireAuth allowedRoles={['ROLE_MANAGER']}/>}>
+            <Route element={<RequireAuth allowedRoles={['ROLE_USER']}/>}>
                 <Route path="editor" element={<Editor />} />
             </Route>
 
-            <Route element={<RequireAuth allowedRoles={['ROLE_ADMIN']}/>}>
+            <Route element={<RequireAuth allowedRoles={['ROLE_USER']}/>}>
                 <Route path="admin" element={<Admin />} />
             </Route>
 
-            <Route element={<RequireAuth allowedRoles={['ROLE_ADMIN', 'ROLE_MANAGER']}/>}>
+            <Route element={<RequireAuth allowedRoles={['ROLE_USER']}/>}>
                 <Route path="lounge" element={<Lounge />} />
             </Route>
 
